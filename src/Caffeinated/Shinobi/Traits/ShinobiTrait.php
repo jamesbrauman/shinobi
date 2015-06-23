@@ -1,7 +1,8 @@
 <?php
 namespace Caffeinated\Shinobi\Traits;
 
-use Illuminate\Database\Eloquent\Collection;
+use Caffeinated\Shinobi\Rules\Rules;
+use Caffeinated\Shinobi\Rules\RulesContract;
 
 trait ShinobiTrait
 {
@@ -30,7 +31,7 @@ trait ShinobiTrait
 	public function getRoles()
 	{
 		if (! is_null($this->roles)) {
-			return $this->roles->lists('slug')->all();
+			return $this->roles->lists('slug');
 		}
 
 		return null;
@@ -116,51 +117,32 @@ trait ShinobiTrait
 	 */
 	public function getPermissions()
 	{
-		$permissions = [[], []];
-
 		foreach ($this->roles as $role) {
 			$permissions[] = $role->getPermissions();
 		}
 
-		return call_user_func_array('array_merge', $permissions);
+		$permissions = call_user_func_array('array_merge', $permissions);
+
+		return $permissions;
 	}
 
 	/**
 	 * Check if user has the given permission.
 	 *
 	 * @param  string $permission
+	 * @param null $model
 	 * @return bool
 	 */
-	public function can($permission)
+	public function can($permission, $model = null)
 	{
-		$can = false;
+		foreach ($this->roles as $role) {
+			if ($role->can($permission) == false) return false;
 
-		foreach ($this->roles as $role){
-			if ($role->can($permission)) {
-				$can = true;
-			}
+			if ($model !== null)
+				if (app(RulesContract::class)->check($permission, $this, $model) == false) return false;
 		}
 
-		return $can;
-	}
-
-	/**
-	 * Check if user has at least one of the given permissions
-	 *
-	 * @param  array $permissions
-	 * @return bool
-	 */
-	public function canAtLeast(array $permissions)
-	{
-		$can = false;
-
-		foreach ($this->roles as $role){
-			if ($role->canAtLeast($permissions)) {
-				$can = true;
-			}
-		}
-
-		return $can;
+		return true;
 	}
 
 	/*

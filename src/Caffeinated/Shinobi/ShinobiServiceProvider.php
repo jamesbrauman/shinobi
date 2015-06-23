@@ -1,6 +1,8 @@
 <?php
 namespace Caffeinated\Shinobi;
 
+use Caffeinated\Shinobi\Rules\Rules;
+use Caffeinated\Shinobi\Rules\RulesContract;
 use Illuminate\Support\ServiceProvider;
 
 class ShinobiServiceProvider extends ServiceProvider
@@ -31,7 +33,7 @@ class ShinobiServiceProvider extends ServiceProvider
 	 */
 	public function register()
 	{
-		// 
+		$this->app->singleton(RulesContract::class, Rules::class);
 	}
 
 	/**
