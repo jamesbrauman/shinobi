@@ -9,16 +9,6 @@
             "email": "shea.lewis89@gmail.com"
         }
     ],
-    "require": {
-        "php": ">=5.5.9",
-        "illuminate/database": "5.1.*",
-        "illuminate/support": "5.1.*",
-        "illuminate/filesystem": "5.1.*",
-        "illuminate/config": "5.1.*"
-    },
-    "require-dev": {
-        "mockery/mockery": "~0.9"
-    },
     "autoload": {
         "psr-0": {
             "Caffeinated\\Shinobi": "src/"
